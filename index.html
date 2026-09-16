@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050814">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Night Clock">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Night Clock</title>
+</head>
+<body>
+  <canvas id="space"></canvas>
+  <div class="scanlines"></div>
+
+  <main class="clock-screen" id="clockScreen">
+    <section class="top-info">
+      <div class="weekday" id="weekday">WEDNESDAY</div>
+      <div class="date" id="date">16 SEP 2026</div>
+    </section>
+
+    <section class="time-wrap">
+      <div class="time" id="time">22:27:36</div>
+      <div class="timezone">LOCAL TIME</div>
+    </section>
+
+    <section class="bottom-info">
+      <div class="alarm-preview">
+        <span class="label">NEXT ALARM</span>
+        <span class="alarm-time" id="nextAlarm">--:--</span>
+        <span class="countdown" id="countdown">NO ALARM</span>
+      </div>
+    </section>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="打开控制面板">＋</button>
+
+    <section class="panel" id="panel">
+      <div class="panel-head">
+        <h2>CONTROL</h2>
+        <button id="closePanel">×</button>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-title">闹钟</div>
+        <div id="alarmList" class="alarm-list"></div>
+        <button class="primary" id="addAlarm">＋ 添加闹钟</button>
+      </div>
+
+      <div class="panel-section settings">
+        <div class="section-title">显示</div>
+        <label><span>24 小时制</span><input type="checkbox" id="format24" checked></label>
+        <label><span>显示秒数</span><input type="checkbox" id="showSeconds" checked></label>
+        <label><span>夜间低亮度</span><input type="checkbox" id="nightMode"></label>
+        <label><span>粒子背景</span><input type="checkbox" id="particles" checked></label>
+      </div>
+
+      <div class="panel-section">
+        <button class="secondary" id="fullscreenBtn">进入全屏</button>
+        <button class="secondary" id="wakeBtn">保持屏幕常亮</button>
+      </div>
+
+      <div class="hint">点击空白处关闭控制面板 · 设置自动保存在本机</div>
+    </section>
+
+    <div class="alarm-modal" id="alarmModal">
+      <div class="modal-card">
+        <div class="panel-head">
+          <h2>NEW ALARM</h2>
+          <button id="cancelAlarm">×</button>
+        </div>
+        <label class="field">
+          <span>时间</span>
+          <input type="time" id="alarmTime" value="07:30">
+        </label>
+        <label class="field">
+          <span>重复</span>
+          <select id="repeat">
+            <option value="once">仅一次</option>
+            <option value="daily">每天</option>
+            <option value="weekdays">工作日</option>
+            <option value="weekends">周末</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>标签</span>
+          <input type="text" id="alarmLabel" placeholder="例如：起床" maxlength="20">
+        </label>
+        <button class="primary" id="saveAlarm">保存闹钟</button>
+      </div>
+    </div>
+
+    <div class="ring-modal" id="ringModal">
+      <div class="ring-card">
+        <div class="ring-title">ALARM</div>
+        <div class="ring-time" id="ringTime">07:30</div>
+        <div class="ring-label" id="ringLabel">WAKE UP</div>
+        <div class="ring-actions">
+          <button class="primary" id="stopAlarm">停止</button>
+          <button class="secondary" id="snoozeAlarm">稍后 5 分钟</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/clock.js"></script>
+  <script src="js/alarm.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

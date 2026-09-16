@@ -1,0 +1,14 @@
+{
+  "name": "Night Clock",
+  "short_name": "Clock",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#050814",
+  "theme_color": "#050814",
+  "description": "炫酷横屏 PWA 时间闹钟",
+  "icons": [
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}
