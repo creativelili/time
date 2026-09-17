@@ -2,24 +2,42 @@
   "name": "TIME Cosmic Clock",
   "short_name": "TIME",
   "description": "Cosmic time alarm clock",
-  "start_url": "./?source=pwa",
-  "scope": "./",
+  "start_url": "/time/",
+  "scope": "/time/",
   "display": "standalone",
   "orientation": "landscape",
   "background_color": "#02050d",
   "theme_color": "#02050d",
   "icons": [
     {
-      "src": "./icons/icon-192.png",
+      "src": "/time/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "./icons/icon-512.png",
+      "src": "/time/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/time/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/time/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "id": "/time/",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
+  "prefer_related_applications": false
 }
