@@ -122,6 +122,29 @@
     }
   });
 
+
+  // Android/Chrome PWA 安装：捕获系统安装事件，提供页面内安装入口。
+  let deferredInstallPrompt = null;
+  const installBtn = document.getElementById("installBtn");
+  window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (installBtn) installBtn.hidden = false;
+  });
+  if (installBtn) {
+    installBtn.addEventListener("click", async () => {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      installBtn.hidden = true;
+    });
+  }
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    if (installBtn) installBtn.hidden = true;
+  });
+
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./sw.js");
   }
