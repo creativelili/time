@@ -6,140 +6,71 @@
   border-radius:clamp(10px,1vw,17px);
   overflow:hidden;
   isolation:isolate;
-  perspective:1000px;
-
+  perspective:900px;
   background:linear-gradient(145deg,#102442,#071427 72%);
   border:1px solid rgba(135,211,255,.52);
-  box-shadow:
-    inset 0 0 28px rgba(89,180,255,.13),
-    0 0 22px rgba(44,150,255,.16);
-
+  box-shadow:inset 0 0 28px rgba(89,180,255,.13),0 0 22px rgba(44,150,255,.16);
   color:#eaf7ff;
   font:500 clamp(58px,10vw,170px)/1 Consolas,monospace;
-  text-shadow:
-    0 0 10px rgba(130,220,255,.9),
-    0 0 30px rgba(70,145,255,.42);
-
+  text-shadow:0 0 10px rgba(130,220,255,.9),0 0 30px rgba(70,145,255,.42);
   display:grid;
   place-items:center;
 }
-
-/* 中间机械结构线 */
 .flip:after{
   content:"";
   position:absolute;
-  z-index:30;
-  left:0;
-  right:0;
-  top:50%;
-  height:1px;
+  z-index:40;
+  left:0;right:0;top:50%;height:2px;
   background:rgba(0,5,12,.9);
-  box-shadow:0 1px 0 rgba(190,230,255,.08);
+  box-shadow:0 1px 0 rgba(190,230,255,.12);
   pointer-events:none;
 }
-
-/* 下一张数字：永远完整存在于底层 */
-.digit-base{
+.digit-static{
   position:absolute;
   inset:0;
   z-index:1;
   display:grid;
   place-items:center;
 }
-
-/* 翻页片 */
-.digit-half{
+.flap{
   position:absolute;
-  left:0;
-  right:0;
+  left:0;right:0;
   height:50%;
   overflow:hidden;
+  z-index:20;
   display:block;
-  z-index:10;
-
   background:linear-gradient(145deg,#102442,#071427 72%);
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
   transform-style:preserve-3d;
 }
-
-/* 数字本身是整张数字，只显示相应半边 */
-.digit-half span{
+.flap span{
   position:absolute;
-  left:0;
-  width:100%;
-  height:200%;
-
-  display:grid;
-  place-items:center;
-
-  font:inherit;
-  color:inherit;
-  text-shadow:inherit;
+  left:0;width:100%;height:200%;
+  display:grid;place-items:center;
+  font:inherit;color:inherit;text-shadow:inherit;
 }
-
 .old-top{
   top:0;
   transform-origin:bottom center;
-  transform:rotateX(0deg);
-  z-index:20;
   border-radius:inherit;
 }
-
-.old-top span{
-  top:0;
-}
-
-.new-top{
-  top:0;
-  transform-origin:bottom center;
-  transform:rotateX(-90deg);
-  z-index:19;
+.old-top span{top:0}
+.new-bottom{
+  bottom:0;
+  z-index:10;
   border-radius:inherit;
 }
-
-.new-top span{
-  top:0;
-}
-
-/*
-  第一阶段：
-  旧上半页从 0° 翻到 -90°。
-  下面已经是“下一数字”，所以不会出现黑洞。
-*/
+.new-bottom span{bottom:0}
 .is-flipping .old-top{
-  animation:flip-old-top .34s cubic-bezier(.22,.7,.25,1) forwards;
+  animation:clean-flip-top .62s cubic-bezier(.35,.05,.2,1) forwards;
 }
-
-/*
-  第二阶段：
-  新上半页从 -90° 翻回 0°。
-*/
-.is-flipping .new-top{
-  animation:flip-new-top .34s .34s cubic-bezier(.22,.7,.25,1) forwards;
+@keyframes clean-flip-top{
+  0%{transform:rotateX(0deg);filter:brightness(1)}
+  45%{filter:brightness(.88)}
+  100%{transform:rotateX(-90deg);filter:brightness(.72)}
 }
-
-@keyframes flip-old-top{
-  0%{
-    transform:rotateX(0deg);
-    filter:brightness(1);
-  }
-  100%{
-    transform:rotateX(-90deg);
-    filter:brightness(.86);
-  }
-}
-
-@keyframes flip-new-top{
-  0%{
-    transform:rotateX(-90deg);
-    filter:brightness(.88);
-  }
-  100%{
-    transform:rotateX(0deg);
-    filter:brightness(1);
-  }
-}
+@media (prefers-reduced-motion:reduce){.is-flipping .old-top{animation-duration:.12s}}
 .local-label{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:23px;color:#b6cae0;font:11px Consolas;letter-spacing:.35em;text-shadow:0 2px 10px #000}.local-label i{width:65px;height:1px;background:linear-gradient(90deg,transparent,#bdeaff)}.local-label i:last-child{background:linear-gradient(90deg,#bdeaff,transparent)}footer{display:flex;align-items:flex-end;justify-content:space-between}.alarm-status{display:flex;align-items:center;gap:18px;padding-left:1vw}.bell{width:48px;height:48px;border:1px solid #73beff73;border-radius:50%;display:grid;place-items:center;background:#03101f55;font-size:25px}.mini-title{font:10px Consolas;letter-spacing:.28em;color:#9cb1c9}#nextAlarm{font:23px Consolas;margin-top:5px}.vline{height:35px;width:1px;background:#b4d2eb55}#countdown{font:11px Consolas;color:#a9bbd0}.actions{display:flex;gap:clamp(10px,2vw,30px)}.actions button{width:56px;height:56px;border:1px solid #78beff73;border-radius:50%;background:#03101f55;color:#e8f6ff;display:grid;place-items:center;font-size:22px;cursor:pointer}.actions small{font-size:9px;margin-top:-4px;color:#bfd1e5}.panel{position:fixed;z-index:20;left:50%;top:50%;width:min(500px,90vw);max-height:88vh;overflow:auto;padding:22px;border:1px solid #78d2ff55;border-radius:18px;background:#040a17f2;backdrop-filter:blur(20px);box-shadow:0 25px 100px #000;transform:translate(-50%,-50%) scale(.96);opacity:0;pointer-events:none;transition:.2s}.panel.open{opacity:1;pointer-events:auto}.panel-title{display:flex;justify-content:space-between;align-items:center}.panel-title b{font-size:12px;letter-spacing:.3em;color:#bde8ff}.panel-title button{border:0;background:none;color:#8fa1b8;font-size:25px}.group{padding:17px 0;border-bottom:1px solid #96b4dc1a}.group-title{font-size:10px;letter-spacing:.25em;color:#70839d;margin-bottom:10px}.group label{display:flex;justify-content:space-between;padding:9px 0;font-size:13px;color:#c0cddd}.alarm-row{display:grid;grid-template-columns:1fr auto auto;gap:9px;align-items:center;padding:9px 0}.alarm-time-row{font:20px Consolas}.alarm-sub{font-size:10px;color:#72849d;margin-top:3px}.alarm-row button{border:1px solid #82aad233;background:#ffffff08;color:#afbdd0;border-radius:7px;padding:7px 9px}.toggle{width:40px;height:22px;border-radius:20px;background:#26334a;border:0;position:relative}.toggle:after{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:#8a98aa;transition:.2s}.toggle.on{background:#1788ad}.toggle.on:after{left:21px;background:#fff}.primary,.secondary{width:100%;height:42px;margin-top:9px;border-radius:9px}.primary{border:1px solid #50d7ff73;background:#32b4e61f;color:#c6efff}.secondary{border:1px solid #82a5cd30;background:#ffffff08;color:#aab9cb}.overlay{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:#0009;backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:.2s}.overlay.show{opacity:1;pointer-events:auto}.card{width:min(390px,88vw);padding:22px;border:1px solid #64d2ff40;border-radius:18px;background:#050a16f7}.card label{display:block;color:#8494ac;font-size:12px;margin:15px 0}.card input,.card select{display:block;width:100%;margin-top:7px;padding:11px;border:1px solid #82aad233;border-radius:8px;background:#0a1020;color:#e8f2ff}.ring{text-align:center}.ring-title{font-size:11px;color:#6f819b;letter-spacing:.4em}.ring #ringTime{font:70px Consolas;margin:15px 0 5px}.ring #ringLabel{color:#91a2ba}body.night #shade{background:#0009}@media(max-width:700px){.flip{width:clamp(48px,14vw,85px);height:clamp(64px,18vw,110px);font-size:clamp(42px,13vw,80px)}.weather{display:none}.actions{gap:8px}.actions button{width:47px;height:47px}}@media(orientation:portrait){main:after{content:"请将手机横屏使用";position:fixed;inset:0;z-index:100;background:#02050d;display:grid;place-items:center;color:#a7b9ce;font-size:16px}}
 /* 360° continuous flip-card clock
    Overrides the previous half-page animation from V4. */
