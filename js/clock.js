@@ -1,44 +1,92 @@
-window.Clock=(()=>{let use24=true,showSeconds=true;
-const days=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
-const pad=n=>String(n).padStart(2,"0");
 
-function base(el,v){
-  el.innerHTML=`<span class="digit-static">${v}</span>`;
-  el.dataset.v=v;
-  el.classList.remove("flipping");
-}
-function setDigit(el,v){
-  if(el.dataset.v===undefined){base(el,v);return}
-  if(el.dataset.v===v)return;
-  const old=el.dataset.v;
+window.Clock = (() => {
+  let use24 = true;
+  let showSeconds = true;
 
-  // 下一张数字始终铺在底层，所以翻页过程中不会出现“上半块空白”。
-  el.innerHTML=`
-    <span class="digit-static next">${v}</span>
-    <span class="flap top old-top"><span>${old}</span></span>
-    <span class="flap bottom old-bottom"><span>${old}</span></span>
-    <span class="flap top new-top"><span>${v}</span></span>
-    <span class="flap bottom new-bottom"><span>${v}</span></span>`;
+  const days = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+  const pad = n => String(n).padStart(2, "0");
 
-  el.dataset.v=v;
-  el.classList.remove("flipping");
-  void el.offsetWidth;
-  el.classList.add("flipping");
+  function draw(el, value) {
+    el.innerHTML = `<span class="digit-base">${value}</span>`;
+    el.dataset.value = value;
+    el.classList.remove("is-flipping");
+  }
 
-  clearTimeout(el._flipTimer);
-  el._flipTimer=setTimeout(()=>base(el,v),720);
-}
-function update(){
-  const d=new Date();
-  let h=d.getHours();
-  if(!use24)h=h%12||12;
-  const vals=[...pad(h),...pad(d.getMinutes()),...pad(d.getSeconds())];
-  document.querySelectorAll(".flip").forEach((el,i)=>setDigit(el,vals[i]));
-  document.getElementById("date").textContent=`${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`;
-  document.getElementById("weekday").textContent=`${days[d.getDay()]}  ${d.toLocaleDateString("en-US",{weekday:"long"})}`;
-  document.querySelectorAll(".seconds").forEach(el=>el.style.display=showSeconds?"flex":"none");
-  const c=document.querySelectorAll("#flipClock>b"); if(c[1])c[1].style.display=showSeconds?"block":"none";
-}
-function set(o){use24=o.use24;showSeconds=o.showSeconds;update()}
-setInterval(update,250);update();return{set,update};
+  function flipTo(el, next) {
+    const old = el.dataset.value;
+
+    if (old === undefined) {
+      draw(el, next);
+      return;
+    }
+    if (old === next || el.classList.contains("is-flipping")) return;
+
+    /*
+      关键：
+      1. 整个“下一数字”先铺在底层，因此任何时刻都不会出现空白。
+      2. 旧数字只有上半页参与翻转。
+      3. 新数字的上半页在旧上半页翻下后翻入。
+      4. 下半页始终显示下一数字，避免黑块和空内容。
+    */
+    el.innerHTML = `
+      <span class="digit-base">${next}</span>
+
+      <span class="digit-half old-top">
+        <span>${old}</span>
+      </span>
+
+      <span class="digit-half new-top">
+        <span>${next}</span>
+      </span>
+    `;
+
+    el.dataset.value = next;
+    el.classList.add("is-flipping");
+
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => draw(el, next), 700);
+  }
+
+  function update() {
+    const now = new Date();
+
+    let h = now.getHours();
+    if (!use24) h = h % 12 || 12;
+
+    const values = [
+      ...pad(h),
+      ...pad(now.getMinutes()),
+      ...pad(now.getSeconds())
+    ];
+
+    document.querySelectorAll(".flip").forEach((el, i) => {
+      flipTo(el, values[i]);
+    });
+
+    document.getElementById("date").textContent =
+      `${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())}`;
+
+    document.getElementById("weekday").textContent =
+      `${days[now.getDay()]}  ${now.toLocaleDateString("en-US", {weekday:"long"})}`;
+
+    document.querySelectorAll(".seconds").forEach(el => {
+      el.style.display = showSeconds ? "flex" : "none";
+    });
+
+    const colons = document.querySelectorAll("#flipClock > b");
+    if (colons[1]) {
+      colons[1].style.display = showSeconds ? "block" : "none";
+    }
+  }
+
+  function set(options) {
+    use24 = options.use24;
+    showSeconds = options.showSeconds;
+    update();
+  }
+
+  setInterval(update, 200);
+  update();
+
+  return { set, update };
 })();
