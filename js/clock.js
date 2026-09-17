@@ -1,1 +1,53 @@
-window.Clock=(()=>{let use24=true,showSeconds=true;const days=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"],pad=n=>String(n).padStart(2,"0");function init(e,v){e.innerHTML='<span class="digit">'+v+'</span>';e.dataset.v=v}function digit(e,v){if(e.dataset.v===undefined){init(e,v);return}if(e.dataset.v===v)return;let old=e.dataset.v;e.innerHTML='<span class="digit">'+v+'</span><div class="half top old"><span class="n">'+old+'</span></div><div class="half bottom new"><span class="n">'+v+'</span></div>';e.dataset.v=v;e.classList.remove("anim");void e.offsetWidth;e.classList.add("anim");setTimeout(()=>init(e,v),700)}function update(){let d=new Date(),h=d.getHours();if(!use24)h=h%12||12;let v=[...pad(h),...pad(d.getMinutes()),...pad(d.getSeconds())];document.querySelectorAll(".flip").forEach((e,i)=>digit(e,v[i]));document.getElementById("date").textContent=d.getFullYear()+"."+pad(d.getMonth()+1)+"."+pad(d.getDate());document.getElementById("weekday").textContent=days[d.getDay()]+"  "+d.toLocaleDateString("en-US",{weekday:"long"});document.querySelectorAll(".seconds").forEach(e=>e.style.display=showSeconds?"flex":"none");document.querySelectorAll("#flipClock>b")[1].style.display=showSeconds?"block":"none"}function set(o){use24=o.use24;showSeconds=o.showSeconds;update()}setInterval(update,250);update();return{set,update}})();
+window.Clock=(()=>{let use24=true,showSeconds=true;
+const days=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+const pad=n=>String(n).padStart(2,"0");
+
+function base(el,v){
+  el.innerHTML=`<span class="digit-static">${v}</span>`;
+  el.dataset.v=v;
+  el.classList.remove("flipping");
+}
+
+function setDigit(el,v){
+  if(el.dataset.v===undefined){base(el,v);return}
+  if(el.dataset.v===v)return;
+
+  const old=el.dataset.v;
+  el.innerHTML=`
+    <span class="digit-static">${old}</span>
+    <span class="flap flap-top old"><span>${old}</span></span>
+    <span class="flap flap-bottom old-bottom"><span>${old}</span></span>
+    <span class="flap flap-bottom new-bottom"><span>${v}</span></span>
+    <span class="flap flap-top new-top"><span>${v}</span></span>`;
+  el.dataset.v=v;
+  el.classList.remove("flipping");
+  void el.offsetWidth;
+  el.classList.add("flipping");
+
+  clearTimeout(el._flipTimer);
+  el._flipTimer=setTimeout(()=>base(el,v),620);
+}
+
+function update(){
+  const d=new Date();
+  let h=d.getHours();
+  if(!use24)h=h%12||12;
+  const vals=[...pad(h),...pad(d.getMinutes()),...pad(d.getSeconds())];
+
+  document.querySelectorAll(".flip").forEach((el,i)=>setDigit(el,vals[i]));
+  document.getElementById("date").textContent=
+    `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`;
+  document.getElementById("weekday").textContent=
+    `${days[d.getDay()]}  ${d.toLocaleDateString("en-US",{weekday:"long"})}`;
+
+  document.querySelectorAll(".seconds").forEach(el=>{
+    el.style.display=showSeconds?"flex":"none";
+  });
+  const colons=document.querySelectorAll("#flipClock>b");
+  if(colons[1])colons[1].style.display=showSeconds?"block":"none";
+}
+function set(o){use24=o.use24;showSeconds=o.showSeconds;update()}
+setInterval(update,250);
+update();
+return{set,update};
+})();
